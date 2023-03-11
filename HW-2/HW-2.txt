@@ -1,0 +1,104 @@
+Sub card1()
+
+For Each ws In Worksheets
+Dim LastRow As Long
+LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+Dim Ticker_Name As String
+Ticker_Name = ""
+
+Dim Total_Volume As Double
+Total_Volume = 0
+
+Dim Open_Price As Double
+Open_Price = 0
+
+Dim Close_Price As Double
+Close_Project = 0
+
+Dim Yearly_Change As Double
+Yearly_Change = 0
+
+Dim Percent_Change As Double
+Percent_Change = 0
+
+Dim Max_Percent As Double
+Dim Max_Percent_Ticker As String
+Max_Percent = 0
+Max_Percent_Ticker = ""
+
+Dim Min_Percent As Double
+Dim Min_Percent_Ticker As String
+Min_Percent = 0
+Min_Percent_Ticker = ""
+
+Dim Max_Volume As Double
+Dim Max_Volume_Ticker As String
+Max_Volume = 0
+Max_Volume_Ticker = ""
+
+Dim Summary_Table_Row As Long
+Summary_Table_Row = 2
+
+Open_Price = ws.Cells(2, 3).Value
+
+    For i = 2 To LastRow
+
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+        Ticker_Name = ws.Cells(i, 1).Value
+        Close_Price = ws.Cells(i, 6).Value
+        Yearly_Change = Close_Price - Open_Price
+        If (Yearly_Change <> 0) Then
+        Percent_Change = (Yearly_Change / Open_Price) * 100
+        Else: Percent_Change = 0
+        End If
+        Total_Volume = Total_Volume + ws.Cells(i, 7).Value
+        
+
+       ws.Range("I" & Summary_Table_Row).Value = Ticker_Name
+       ws.Range("J" & Summary_Table_Row).Value = Yearly_Change
+       ws.Range("K" & Summary_Table_Row).Value = Percent_Change & "%"
+       If ws.Range("K" & Summary_Table_Row).Value >= 0 Then
+       ws.Range("K" & Summary_Table_Row).Interior.Color = vbGreen
+       Else: ws.Range("K" & Summary_Table_Row).Interior.Color = vbRed
+       End If
+       ws.Range("L" & Summary_Table_Row).Value = Total_Volume
+       
+Summary_Table_Row = Summary_Table_Row + 1
+
+Open_Price = ws.Cells(i + 1, 3).Value
+    
+    If (Percent_Change > Max_Percent) Then
+                        Max_Percent = Percent_Change
+                        Max_Percent_Ticker = Ticker_Name
+                    ElseIf (Percent_Change < Min_Percent) Then
+                        Min_Percent = Percent_Change
+                        Min_Percent_Ticker = Ticker_Name
+                    End If
+                           
+                    If (Total_Volume > Max_Volume) Then
+                        Max_Volume = Total_Volume
+                        Max_Volume_Ticker = Ticker_Name
+                    End If
+       ws.Range("O2").Value = "Greatest % Increase" & "=" & Max_Percent
+       ws.Range("P2").Value = "Ticker for Greatest % Increase" & "=" & Max_Percent_Ticker
+       ws.Range("O3").Value = "Greatest % Decrease" & "=" & Min_Percent
+       ws.Range("P3").Value = "Ticker for Greatest % Decrease" & "=" & Min_Percent_Ticker
+       ws.Range("O4").Value = "Greatest Total Volume" & "=" & Max_Volume
+       ws.Range("P4").Value = "Ticker for Greatest Total Volume" & "=" & Max_Volume_Ticker
+       
+    Total_Volume = 0
+    Yearly_Change = 0
+    Close_Price = 0
+    
+    Else
+    
+      Total_Volume = Total_Volume + ws.Cells(i, 7).Value
+      
+    End If
+
+  Next i
+       
+Next ws
+End Sub
